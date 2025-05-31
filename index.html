@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="turn2.js"></script>
+  <script src="turnscript.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<style>
+  /* Basic sample */
+
+body {
+  overflow: auto; /* ซ่อน Scrollbar */
+  background-color: #E8F9FF; /* ใส่ URL ของภาพพื้นหลัง */
+  background-repeat: no-repeat; /* ไม่ให้ภาพซ้ำ */
+  background-size: cover; /* ขยายภาพให้เต็มหน้าจอ */
+  background-position: center; /* จัดตำแหน่งภาพให้อยู่กึ่งกลาง */
+  margin: 0;
+  padding: 0;
+}
+
+/* ปุ่มควบคุมทั้งหมด */
+.controls {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 20px;
+  z-index: 1000;
+}
+
+/* ตัวชี้หน้า */
+#page-indicator {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  z-index: 1000;
+}
+
+/* ปุ่มทั่วไป */
+.controls button,
+.controls a {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  text-decoration: none;
+  color: white;
+}
+
+/* ปุ่ม "ก่อนหน้า" และ "ถัดไป" */
+.controls button {
+  background-color: rgba(255, 105, 180, 0.8); /* สีชมพู */
+}
+
+.controls button:hover {
+  background-color: rgba(255, 105, 180, 1); /* สีชมพูเข้มขึ้นเมื่อ hover */
+}
+
+/* ปุ่ม "กลับสู่หน้าเมนู" */
+.controls a {
+  background-color: rgba(0, 0, 0, 0.7); /* สีดำโปร่งใส */
+}
+
+.controls a:hover {
+  background-color: rgba(0, 0, 0, 0.9); /* สีดำเข้มขึ้นเมื่อ hover */
+}
+
+
+.flipbook-viewport{
+	overflow:auto;
+	width:100%;
+	height:100%;
+}
+
+.flipbook-viewport .container{
+	position:absolute;
+	top:50%;
+	left:50%;
+	margin:auto;
+}
+
+.flipbook-viewport .flipbook{
+	width:922px;
+	height:600px;
+	left:-461px;
+	top:-300px;
+}
+
+.flipbook-viewport .page{
+	width:461px;
+	height:600px;
+	background-color:white;
+	background-repeat:no-repeat;
+	background-size:100% 100%;
+}
+
+.flipbook .page{
+	-webkit-box-shadow:0 0 20px rgba(0,0,0,0.2);
+	-moz-box-shadow:0 0 20px rgba(0,0,0,0.2);
+	-ms-box-shadow:0 0 20px rgba(0,0,0,0.2);
+	-o-box-shadow:0 0 20px rgba(0,0,0,0.2);
+	box-shadow:0 0 20px rgba(0,0,0,0.2);
+}
+
+.flipbook-viewport .page img{
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	margin:0;
+}
+
+.flipbook-viewport .shadow{
+	-webkit-transition: -webkit-box-shadow 0.5s;
+	-moz-transition: -moz-box-shadow 0.5s;
+	-o-transition: -webkit-box-shadow 0.5s;
+	-ms-transition: -ms-box-shadow 0.5s;
+
+	-webkit-box-shadow:0 0 20px #ccc;
+	-moz-box-shadow:0 0 20px #ccc;
+	-o-box-shadow:0 0 20px #ccc;
+	-ms-box-shadow:0 0 20px #ccc;
+	box-shadow:0 0 20px #ccc;
+}
+
+
+  /* รองรับมือถือ */
+  @media (max-width: 768px) {
+    .flipbook-viewport .flipbook {
+      width: 100%;
+      height: auto;
+    }
+
+    .flipbook-viewport .page {
+      width: calc(50vw - 10px); /* ปรับขนาดหน้าหนังสือให้เล็กลง */
+      height: auto;
+      margin: 0 auto;
+    }
+
+    .back-button {
+      font-size: 14px;
+      padding: 8px 16px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .flipbook-viewport .flipbook {
+      width: 100%;
+      height: auto;
+    }
+
+    .flipbook-viewport .page {
+      width: calc(100vw - 20px); /* ใช้ความกว้างหน้าจอทั้งหมด */
+      height: auto;
+    }
+
+    .back-button {
+      font-size: 12px;
+      padding: 6px 12px;
+    }
+  }
+</style>
+</head>
+<body>
+  
+<div class="flipbook-viewport">
+  <div class="container">
+    <div class="flipbook">
+        <div style="background-image:url(https://lh3.googleusercontent.com/d/1hpCoXzNiQBsZg4pdNYHUMaACkxOFc1La)"></div>
+    </div>
+  </div>
+  
+  <!-- Navigation Buttons -->
+<div class="controls" style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; align-items: center;">
+  <button id="zoomIn"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+  <button id="zoomOut"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+  <button id="prevPage"><i class="fa-solid fa-chevron-left"></i></button>
+  <a href="https://quiznurse.glitch.me/menuFlipbook.html" 
+     class="back-button" target="_self"><i class="fa-solid fa-book"></i></a>
+  <button id="nextPage"><i class="fa-solid fa-chevron-right"></i></button>
+</div>
+
+      <div id="page-indicator" style="position: absolute; bottom: 10px; right: 10px; background: rgba(0, 0, 0, 0.5); color: white; padding: 5px 10px; border-radius: 5px;">
+  Page 1/1
+</div>
+</div>
+
+
+
+
+  
+<script>
+const data = [
+  { id: 0, imageUrl: "https://lh3.googleusercontent.com/d/1Ibux2yZGsFKbmaRWnmqLWbu78hylbJHH" },
+  { id: 1, imageUrl: "https://lh3.googleusercontent.com/d/17iP-eg3UlXY_ahnYtCcmDU_8lDzlbuuP" },
+  { id: 2, imageUrl: "https://lh3.googleusercontent.com/d/19IlWCn0djuw8kaxzqUpVbVDdNOXix5DX" },
+  { id: 3, imageUrl: "https://lh3.googleusercontent.com/d/1hpCoXzNiQBsZg4pdNYHUMaACkxOFc1La" },
+  { id: 4, imageUrl: "https://lh3.googleusercontent.com/d/1v_CaQrWRV4kne59YPunI5wTU3zvG7ko6" },
+  { id: 5, imageUrl: "https://lh3.googleusercontent.com/d/1ES6yWhLAaGPZ4nmMXIIK0t1KmwcUqe5B" },
+  { id: 6, imageUrl: "https://lh3.googleusercontent.com/d/1PmfD9uFgjye_nZVIJrtRkXKhXu-mS9XM" },
+  { id: 7, imageUrl: "https://lh3.googleusercontent.com/d/1UpR0B7fb0G0fghELYxPuDXTqwRmunG4J" },
+  { id: 8, imageUrl: "https://lh3.googleusercontent.com/d/13lPi55fOlbZPw87uNIs34G79vH90m--K" },
+  { id: 9, imageUrl: "https://lh3.googleusercontent.com/d/1bLSwWMSkEdfO_TCMXeSNH6nLuNAY7FDz" },
+  { id: 10, imageUrl: "https://lh3.googleusercontent.com/d/1GariGuGKtt9lp699DS9Je3HmLrWT5KQn" },
+  { id: 11, imageUrl: "https://lh3.googleusercontent.com/d/196i9x9E4DauBtbNqxU7fM0T-auO8eAKJ" },
+  { id: 12, imageUrl: "https://lh3.googleusercontent.com/d/1q1lKkh3cajVAOq0L1lTMKyT_vM9nWI72" },
+  { id: 13, imageUrl: "https://lh3.googleusercontent.com/d/1tSC5c9u1CCSJF4t3OrISrUPeZwg8kenc" },
+  { id: 14, imageUrl: "https://lh3.googleusercontent.com/d/1SVoODdl24kyXlVe0LA4nBfg68K45M6OR" },
+  { id: 15, imageUrl: "https://lh3.googleusercontent.com/d/1ye1UhArDLHEPg_T04xKE8H05BypM1pAy" },
+  { id: 16, imageUrl: "https://lh3.googleusercontent.com/d/1zduFC3FFcFVfxA8JVaMVY1y11QFh5Wdf" },
+  { id: 17, imageUrl: "https://lh3.googleusercontent.com/d/1bV4E8Inl0LtQkhvZCYb8tOEr6RO--Cab" },
+  { id: 18, imageUrl: "https://lh3.googleusercontent.com/d/1f5kNHdyejeMCissDZIeWUNWMxa1kCnNg" },
+  { id: 19, imageUrl: "https://lh3.googleusercontent.com/d/1Kq6axL9gSlfwUvorMUwxuqAGabf7ILLz" },
+  { id: 20, imageUrl: "https://lh3.googleusercontent.com/d/10IcV7o_4F5F5k93zrp4yW4u5E-pg_w_J" },
+  { id: 21, imageUrl: "https://lh3.googleusercontent.com/d/1Jp8-72nOFNNfjykChphAQCPNEGYMAdwt" },
+  { id: 22, imageUrl: "https://lh3.googleusercontent.com/d/1QitJIka-ZbgdqyPHtbRSYvUfOdfSrRoJ" },
+  { id: 23, imageUrl: "https://lh3.googleusercontent.com/d/1zchvcyJJmXKmIzuHy-Znku9DjWaAzGAt" },
+  { id: 24, imageUrl: "https://lh3.googleusercontent.com/d/1XbMBgPMyONXgQ2uBzsK7yj8YEat5bhpK" },
+  { id: 25, imageUrl: "https://lh3.googleusercontent.com/d/1-jQ0UtUsFirDN6MjR6M-0lXcMjN2yQ_F" },
+  { id: 26, imageUrl: "https://lh3.googleusercontent.com/d/1IFQex_0NHn1pHVPcXPTKjvzZEnbikF4b" },
+  { id: 27, imageUrl: "https://lh3.googleusercontent.com/d/16XBJy3h732AjfUIzf6TfFcQDi5S_O8rG" },
+  { id: 28, imageUrl: "https://lh3.googleusercontent.com/d/1pJRK7UVWNhH1By0ZvbAGs523Vu5XdoCm" },
+  { id: 29, imageUrl: "https://lh3.googleusercontent.com/d/1SDb1x6DDSkkK_ActUgYSXpsWufTDf1U8" },
+  { id: 30, imageUrl: "https://lh3.googleusercontent.com/d/11tbzAgJ9_LI9uZzKD31y_47gYbbzdlBx" },
+  { id: 31, imageUrl: "https://lh3.googleusercontent.com/d/1ySncH0uhXa1u2Fwm9uLqrJHhsceEAAG9" },
+  { id: 32, imageUrl: "https://lh3.googleusercontent.com/d/1KTP7NI6tXDEXL9QHGxktJosMXtmCnZMn" },
+  { id: 33, imageUrl: "https://lh3.googleusercontent.com/d/1J0yEzyXMZ3ZaN0qp1bdmrxxOpe61-b63" },
+  { id: 34, imageUrl: "https://lh3.googleusercontent.com/d/1vomHvso6eX_8mjMc2beb8feQKuQHkm-W" },
+  { id: 35, imageUrl: "https://lh3.googleusercontent.com/d/1FNQSi8RogZswKUVmdBFzMH4d4YYDB54I" },
+  { id: 36, imageUrl: "https://lh3.googleusercontent.com/d/1oaq4AI-qEFv6o2LhN9VdyCGZBVt2s2Dy" },
+  { id: 37, imageUrl: "https://lh3.googleusercontent.com/d/1cPfOE0dD2o36pbou6HK_aakoxV3V4DgJ" },
+  { id: 38, imageUrl: "https://lh3.googleusercontent.com/d/1F0jNQHMWzkxUPPNwD7Db7XHvE5N9yWsc" },
+  { id: 39, imageUrl: "https://lh3.googleusercontent.com/d/1VNIKki58I3eWjlnKVfn3IVpbJN6gKOjI" },
+  { id: 40, imageUrl: "https://lh3.googleusercontent.com/d/1fp26Kha3OMh56s03-PNtQ8JJkv_dnjDE" },
+  { id: 41, imageUrl: "https://lh3.googleusercontent.com/d/1Gl-BxHWDa_4G3f-9QVw9JLrtCbOeFQ9F" },
+  { id: 42, imageUrl: "https://lh3.googleusercontent.com/d/1GtN9YNzabOtt2uiVqhxvNZLQH9nz-hKT" },
+  { id: 43, imageUrl: "https://lh3.googleusercontent.com/d/1A5aw-R5hTooSwqns8eQiCdCZ7uEpKjuP" },
+  { id: 44, imageUrl: "https://lh3.googleusercontent.com/d/1AEU24kmHc4fwjyxVw3tvZhCcn1YMB8tj" },
+  { id: 45, imageUrl: "https://lh3.googleusercontent.com/d/14q_hZbJheC1jNrT_Zag5qHB1Vqj7CBUC" },
+  { id: 46, imageUrl: "https://lh3.googleusercontent.com/d/15ezyMc2LLTWIITW-CNqOickcmsOv2GQT" },
+  { id: 47, imageUrl: "https://lh3.googleusercontent.com/d/1oWz667fl_fGn2MZxQwdRDnoxF-i2UMkk" },
+  { id: 48, imageUrl: "https://lh3.googleusercontent.com/d/1VvTrlMhZkrEnuWw6lJSmhMZyQN-n8Te3" },
+  { id: 49, imageUrl: "https://lh3.googleusercontent.com/d/1rLFol6dbubSv2lI0gC1ERe-oRTQAid8o" },
+  { id: 50, imageUrl: "https://lh3.googleusercontent.com/d/1opUZivPxm--b9hb61PN1-ckEXRm7Y6Nh" },
+  { id: 51, imageUrl: "https://lh3.googleusercontent.com/d/1He4lxSiTWd5oxkjS1l3jpQkOPC53ipJk" },
+  { id: 52, imageUrl: "https://lh3.googleusercontent.com/d/1dGtWFHaFWRtzfTTTmc3tmpU5rgz9qa2p" },
+  { id: 53, imageUrl: "https://lh3.googleusercontent.com/d/1YTRknanVuv4ny6gZLrf9JB3l-9LFTFAT" },
+  { id: 54, imageUrl: "https://lh3.googleusercontent.com/d/1KOazJD07l-NBBy-1Hsq6N6pDwaegu6PJ" },
+  { id: 55, imageUrl: "https://lh3.googleusercontent.com/d/1uVr6f1eqVd2116HROhjQgy4mI_zfCmdG" },
+  { id: 56, imageUrl: "https://lh3.googleusercontent.com/d/14dPO4yv4B2onGqYLgZWC6loSIAZXd4NQ" },
+  { id: 57, imageUrl: "https://lh3.googleusercontent.com/d/1nlPD1JwNx8Et2Jz2hkQ_2PLEEWudPKx8" },
+  { id: 58, imageUrl: "https://lh3.googleusercontent.com/d/1C2FDjeOiFdMCIS00Jg-hrU-JdQdd5Yg9" },
+  { id: 59, imageUrl: "https://lh3.googleusercontent.com/d/1e9Pa-bJKiubP9aJyoovBCjosLZ19u1ba" },
+  { id: 60, imageUrl: "https://lh3.googleusercontent.com/d/14dGzoJKHYIPlZdXomx6zQ-kX2eAVgk_Z" },
+  { id: 61, imageUrl: "https://lh3.googleusercontent.com/d/1oO7wws_3FkjNe1r76vber1-BO4iJ43Di" },
+  { id: 62, imageUrl: "https://lh3.googleusercontent.com/d/1tgizYNjjqekV4UxulqGBYssrkh8V4UL9" },
+  { id: 63, imageUrl: "https://lh3.googleusercontent.com/d/1nBJ7cYT4BWRC-rASPYOF_yR2PWyTZGQU" },
+  { id: 64, imageUrl: "https://lh3.googleusercontent.com/d/1UcN0cfurz0bFv6TjBxgU7L7G_zpkb_qP" },
+  { id: 65, imageUrl: "https://lh3.googleusercontent.com/d/18DahbGoQeRzzwctytgwrR2NYzcwuxpmS" },
+  { id: 66, imageUrl: "https://lh3.googleusercontent.com/d/1WDJiVRFR_5mpnS2HGuyyJ4TetfmLToDP" },
+  { id: 67, imageUrl: "https://lh3.googleusercontent.com/d/1WlH-N5qpqCSEnM1gkl-xvoALhFFkdvfb" },
+  { id: 68, imageUrl: "https://lh3.googleusercontent.com/d/1pZ6e3fmwFlV8gQhMS1hTinYE7aBLLfxM" },
+  { id: 69, imageUrl: "https://lh3.googleusercontent.com/d/16FfjMvPJ0_VxiM9GCNMtRjdH-fgd2cjA" },
+  { id: 70, imageUrl: "https://lh3.googleusercontent.com/d/1p9mjYkNQgVUlcAIQCooOK5yFN8lA-O-B" },
+  { id: 71, imageUrl: "https://lh3.googleusercontent.com/d/1S8B2yijGFya8k2KbP7l0gO126i-721XR" },
+  { id: 72, imageUrl: "https://lh3.googleusercontent.com/d/1e58vb2t0kpuN3rbVe3MD6KE_JC1z7Pkz" },
+  { id: 73, imageUrl: "https://lh3.googleusercontent.com/d/17jF4JD8XG-KEaRb0lGPNKmQAoYqmHlPf" },
+  { id: 74, imageUrl: "https://lh3.googleusercontent.com/d/16P_HLcJScEjwcW3IIAOWUOChLSqQHXku" },
+  { id: 75, imageUrl: "https://lh3.googleusercontent.com/d/1B_oSq2i0VRmLVRl0uRd78xXnH2me98n0" },
+  { id: 76, imageUrl: "https://lh3.googleusercontent.com/d/1Ru_qN5zYzZFH8ffZQYr8xk0GAt8yL3w5" },
+  { id: 77, imageUrl: "https://lh3.googleusercontent.com/d/1MumWfTX-5WenNZiDpuoXsK13XmJv7ki6" },
+  { id: 78, imageUrl: "https://lh3.googleusercontent.com/d/1CKPWsSU9h9VwKcY2N3_6yJ9pNU6r_yUG" },
+  { id: 79, imageUrl: "https://lh3.googleusercontent.com/d/1V4CAF_xXydNrNNpSe-sSfkW3nvV3XZ5k" },
+  { id: 80, imageUrl: "https://lh3.googleusercontent.com/d/1CKG7ZF27JWdG-SNuXD28sBkkfFjeyEaQ" },
+  { id: 81, imageUrl: "https://lh3.googleusercontent.com/d/1YjeS_b3-KxY5eTFzHclDD5qc84gH8xhp" },
+  { id: 82, imageUrl: "https://lh3.googleusercontent.com/d/1BFZaBE3eCX68L6iplQ9e2mkWsHYqjNZa" },
+  { id: 83, imageUrl: "https://lh3.googleusercontent.com/d/1J7IRgK21ZoXEKOBdfMqxoN-70cJVqnfi" },
+  { id: 84, imageUrl: "https://lh3.googleusercontent.com/d/1NcqT4_6bBQuFuN7KoU72lhBypUIwyhCc" },
+  { id: 85, imageUrl: "https://lh3.googleusercontent.com/d/1OdIGPw-ppS7zNVOSicaUWafG01LiwSB3" },
+  { id: 86, imageUrl: "https://lh3.googleusercontent.com/d/1tb917N8qrtNQ4cQ4dt-8i5kKHvn1gHiF" },
+  { id: 87, imageUrl: "https://lh3.googleusercontent.com/d/1rwbc5U-_cjBef2dROwmlogSLualfRBB3" },
+  { id: 88, imageUrl: "https://lh3.googleusercontent.com/d/1r-VLq0k66Tv_nO5ZxRgqvkUisSUG2Qog" },
+  { id: 89, imageUrl: "https://lh3.googleusercontent.com/d/15Jb_1MRPswWbpSv7Rsznjz720YOZoxoY" },
+  { id: 90, imageUrl: "https://lh3.googleusercontent.com/d/1hEUxe3iQxg_BtwuQ45bAAx8vewlAEoz5" },
+  { id: 91, imageUrl: "https://lh3.googleusercontent.com/d/1oV4ypeROyQPoL5RkVxhIGnLvgyIgZ8WX" },
+  { id: 92, imageUrl: "https://lh3.googleusercontent.com/d/1ZvFSL7haMXf4SkNyQKWhEisev0BUGjML" },
+  { id: 93, imageUrl: "https://lh3.googleusercontent.com/d/1baO070mCGh2oBcdKx9mltDAtCpzpiLD2" },
+  { id: 94, imageUrl: "https://lh3.googleusercontent.com/d/1ADytcGPYD7KlJQ3d1MyfWfpK5TUrQ3wd" },
+  { id: 95, imageUrl: "https://lh3.googleusercontent.com/d/1w6B-2a9dh30mviit7hWOCKTUyURjdHhp" },
+  { id: 96, imageUrl: "https://lh3.googleusercontent.com/d/12azECXLHMcu0ceTctKwoPhrXp8Ss0TxD" },
+  { id: 97, imageUrl: "https://lh3.googleusercontent.com/d/1SV_3Vwc-H2FFmUx9aNfBQpi2ysVvSemk" },
+  { id: 98, imageUrl: "https://lh3.googleusercontent.com/d/12QSWK7YRj4ycT11fK25oxMJGs0T6xjmO" },
+  { id: 99, imageUrl: "https://lh3.googleusercontent.com/d/1kGg7YpdnO8ft7n6MScHCjEy6RfSbIsoD" },
+  { id: 100, imageUrl: "https://lh3.googleusercontent.com/d/1rBunetO8k9HJbjPnANiX5ZpyBPmmcpCe" },
+  { id: 101, imageUrl: "https://lh3.googleusercontent.com/d/1HV9C9Gl8nMat3gUeAeTtuwrAAoxNForg" },
+  { id: 102, imageUrl: "https://lh3.googleusercontent.com/d/1V1XfxAsCENMkaDSv0POK0AtcBMTYTgQd" },
+  { id: 103, imageUrl: "https://lh3.googleusercontent.com/d/1wmwSptDQYnQ_YkDgrSxQiujoH7vMFqGQ" },
+  { id: 104, imageUrl: "https://lh3.googleusercontent.com/d/1Y-Ovy76_C6mBUcqwEAQbFPNiir7uEFqI" },
+  { id: 105, imageUrl: "https://lh3.googleusercontent.com/d/1e3_LOWGTrxokZ8-q7SiRMXf9mRxcuKYo" },
+  { id: 106, imageUrl: "https://lh3.googleusercontent.com/d/11DZSZGAvFfRm2hXCssHDCp7B9vRSLKSq" },
+  { id: 107, imageUrl: "https://lh3.googleusercontent.com/d/1UsQLaqBfHCUugBx9PKezrOFKeJf2_IA-" },
+  { id: 108, imageUrl: "https://lh3.googleusercontent.com/d/1jQ-Z1ImJ0p7M9-pqTvb53sw48O9LQYHk" },
+  { id: 109, imageUrl: "https://lh3.googleusercontent.com/d/1Qg8QBR5dcGNHSisvlfIH1LwTXc-CRMhu" },
+  { id: 110, imageUrl: "https://lh3.googleusercontent.com/d/1QHv0fJDp4G0Zx-v9YUdBa6fd4LxoE34s" },
+  { id: 111, imageUrl: "https://lh3.googleusercontent.com/d/1xyXNzTlaULpFClhDcMt0D7ICXoYDMGjJ" },
+  { id: 112, imageUrl: "https://lh3.googleusercontent.com/d/1VdeBONXB4V3qsjPrj5epiA-4ROleFBxh" },
+  { id: 113, imageUrl: "https://lh3.googleusercontent.com/d/1FactHPpcC6Zy1m8BpSmzJ0u2gFzQ3E0A" },
+  { id: 114, imageUrl: "https://lh3.googleusercontent.com/d/1vv0ltADGBDXoHQtPHT8k0aUlocr04Xug" },
+  { id: 115, imageUrl: "https://lh3.googleusercontent.com/d/1g3iHM80BFwHHvlXeuv60voIVaEMw0XhH" },
+  { id: 116, imageUrl: "https://lh3.googleusercontent.com/d/1kWs29BbSQfopeKLOrHTO3ICStBdCdDMR" },
+  { id: 117, imageUrl: "https://lh3.googleusercontent.com/d/17bRlEkePGHKqVV4aD_n8BeVs4qgotMKL" },
+  { id: 118, imageUrl: "https://lh3.googleusercontent.com/d/1-AW0LNZTJH0IXhnAVJ-mARbUWETTDtA5" },
+  { id: 119, imageUrl: "https://lh3.googleusercontent.com/d/1bvgTgctUzBLc7PFxJfQn9416ASUdLI55" },
+  { id: 120, imageUrl: "https://lh3.googleusercontent.com/d/1Ejt7iSDRXwntZFGxO40OEbc6Zp4FusO_" },
+  { id: 121, imageUrl: "https://lh3.googleusercontent.com/d/1n7H7AWIj9LXl28IKEymYjU1NAZLPy7LF" },
+  { id: 122, imageUrl: "https://lh3.googleusercontent.com/d/1JrXHMKTlCMqIp4teAvAOY5pWxaeDgJhL" },
+  { id: 123, imageUrl: "https://lh3.googleusercontent.com/d/106SmkT65b8WtMmSpWrmYH-hkqs9rPyOb" },
+  { id: 124, imageUrl: "https://lh3.googleusercontent.com/d/1Go30igkqqtFL7gEWKiC5dbF4W_v9lr-F" },
+  { id: 125, imageUrl: "https://lh3.googleusercontent.com/d/1dwfmtoo02kEEPIZ1EYzYcj96CIhW2823" },
+  { id: 126, imageUrl: "https://lh3.googleusercontent.com/d/1s3if6AnfTgoyDHm9IqsgufRCLGb5_1sd" },
+  { id: 127, imageUrl: "https://lh3.googleusercontent.com/d/1a1xYsrwupYvHz6PDO0xZioxE4PZMH-x6" },
+  { id: 128, imageUrl: "https://lh3.googleusercontent.com/d/1rGtu95hVohWXuPbuO3apFAugyIg6u5F3" },
+  { id: 129, imageUrl: "https://lh3.googleusercontent.com/d/1oag5lZgeROmAV1J9MzIANgOY2WEAxpXi" },
+  { id: 130, imageUrl: "https://lh3.googleusercontent.com/d/1DduOKErdlCKp6OMZuFhzIpCVoj1LduQ5" },
+  { id: 131, imageUrl: "https://lh3.googleusercontent.com/d/1t9Ci_yyMfT_MpXNQBdH2Irp5uQVaox0b" },
+  { id: 132, imageUrl: "https://lh3.googleusercontent.com/d/1tDfSBrHJ15RtMtEA0GQvQ_c8DWzhiCQs" },
+  { id: 133, imageUrl: "https://lh3.googleusercontent.com/d/1DllZbOM8TiaB51b3FnEweWVZjntyJphF" },
+  { id: 134, imageUrl: "https://lh3.googleusercontent.com/d/1moDR-4_ORgWJorx86ZV_7yynzuCwa2j2" },
+  { id: 135, imageUrl: "https://lh3.googleusercontent.com/d/1D5316fHQCe_4kokmG7-5_TSI1Hxv7j6a" },
+  { id: 136, imageUrl: "https://lh3.googleusercontent.com/d/1FRPYT4CqlzELkG2VRV0XcxFWw0kYKSA7" },
+  { id: 137, imageUrl: "https://lh3.googleusercontent.com/d/1G9xKt1sZQoBCzzm8Uk3L3i7lGl4VFyl5" },
+  { id: 138, imageUrl: "https://lh3.googleusercontent.com/d/1e8x-4Z6-f3rMHpkJVZOAT9ygVpDv4wAi" },
+  { id: 139, imageUrl: "https://lh3.googleusercontent.com/d/1848VNMImdrPPrYZx4OTtKvoNy2Gj18LZ" },
+  { id: 140, imageUrl: "https://lh3.googleusercontent.com/d/1LOiWSfu1wpJkWNglOxSIPRbS97ElLrQn" },
+  { id: 141, imageUrl: "https://lh3.googleusercontent.com/d/1q4wzPLkQLLFcwmI25pTYmnhmUAxpzaKV" },
+  { id: 142, imageUrl: "https://lh3.googleusercontent.com/d/1fNBzdIwvPTpp-ou6DgJ4QmTlBr-sRqhY" },
+  { id: 143, imageUrl: "https://lh3.googleusercontent.com/d/1Nz-lb9c0iXrOfyVYKDxcoT9pBKI9k6oA" },
+  { id: 144, imageUrl: "https://lh3.googleusercontent.com/d/1TY7M-4_ro8wClac_GWvkueinOKXcdqBj" },
+  { id: 145, imageUrl: "https://lh3.googleusercontent.com/d/1GvugJNhypR4mWnDrvNRXIbgHU1-5tpYk" },
+  { id: 146, imageUrl: "https://lh3.googleusercontent.com/d/1weXBehMvdWqBtVBROz8kXlrUdY_OTAV9" },
+  { id: 147, imageUrl: "https://lh3.googleusercontent.com/d/1Hs0ZGhBIilPiKk3x9SOzvHVZhFmba7t_" },
+  { id: 148, imageUrl: "https://lh3.googleusercontent.com/d/1lCx22Q30bVVlZJXPN62wCv-B39VgXIim" },
+  { id: 149, imageUrl: "https://lh3.googleusercontent.com/d/1XH85_nfFjdAZujPlWkTKnFI1n-egffBp" },
+  { id: 150, imageUrl: "https://lh3.googleusercontent.com/d/1iY6uPkXqSEldD3iZv3Wsm6Rr7ASdX30V" },
+  { id: 151, imageUrl: "https://lh3.googleusercontent.com/d/1KX4k9q0lYTYEXizR9snYQOnQHzs1yU5E" },
+  { id: 152, imageUrl: "https://lh3.googleusercontent.com/d/1vKZUghClJ4tos1IMObUdpzPCAtvTluSe" },
+  { id: 153, imageUrl: "https://lh3.googleusercontent.com/d/1EsbkR3jcrnarc1t1pP_EenkBmIej_s6L" },
+  { id: 154, imageUrl: "https://lh3.googleusercontent.com/d/1fniUvAGW0ObjnNE68MKNyRG95ZAraVAW" },
+  { id: 155, imageUrl: "https://lh3.googleusercontent.com/d/1VgRI3ysYC8u2UdWzey_8BbTZL2fbsd8D" },
+  { id: 156, imageUrl: "https://lh3.googleusercontent.com/d/1DHZq-GIgj6fGBY2DsnM706jd8ghXZkEz" },
+  { id: 157, imageUrl: "https://lh3.googleusercontent.com/d/1sj7jqXPg5zaANvVuSY0co1D1x1f6EIri" },
+  { id: 158, imageUrl: "https://lh3.googleusercontent.com/d/1vqR4s6O7PJBYt3VUTO10fNEf_JqjdkXk" },
+//   พยาบาลผู้ใหญ่
+  { id: 159, imageUrl: "https://lh3.googleusercontent.com/d/1ePQwkdMzGyHtJpF6elQwid_Avz0DJY0E" },
+  { id: 160, imageUrl: "https://lh3.googleusercontent.com/d/1Gb9oO4LNAyUxynYX2o2vdujPQTU0pKm0" },
+  { id: 161, imageUrl: "https://lh3.googleusercontent.com/d/19bPS5KJO13z6R7APIMUKWK2WeGDacANu" },
+  { id: 162, imageUrl: "https://lh3.googleusercontent.com/d/1OJystPe-U2vjMYqaw4ul9zzaIoAmmFwf" },
+  { id: 163, imageUrl: "https://lh3.googleusercontent.com/d/1i1UcSo7Lk6v3XBnm6ZUSk0CACutDW76h" },
+  { id: 164, imageUrl: "https://lh3.googleusercontent.com/d/1WLpLZYRfjpgsLumCdj7tjiQ9lU3zGkYp" },
+  { id: 165, imageUrl: "https://lh3.googleusercontent.com/d/1vGuHa1hcBirdzlcUqdER-7aS229Z5HGv" },
+  { id: 166, imageUrl: "https://lh3.googleusercontent.com/d/1pTiFacTzz8O3I4x_V4nbhbSHmZ9dOSB_" },
+  { id: 167, imageUrl: "https://lh3.googleusercontent.com/d/1YM-cMRp8qhxhySUe7iTzH4cwHhxJ6CW2" },
+  { id: 168, imageUrl: "https://lh3.googleusercontent.com/d/1rLaRzi7Tk8eBz9nQ2P2abqaV3fWJXuEJ" },
+  { id: 169, imageUrl: "https://lh3.googleusercontent.com/d/1PskOfn-s9vlFO_TuXBKeWsX2nicGaQf9" },
+  { id: 170, imageUrl: "https://lh3.googleusercontent.com/d/1mnM3bJtOTmXoklFwOy8WbUnNIC_5zl17" },
+  { id: 171, imageUrl: "https://lh3.googleusercontent.com/d/1WL6qZ68a3l6B2yVQcX1tSsxZUYFsMIGD" },
+  { id: 172, imageUrl: "https://lh3.googleusercontent.com/d/1EUrtER-P5B9saC73fXYs-e368z7KcphV" },
+  { id: 173, imageUrl: "https://lh3.googleusercontent.com/d/11vGbcKIQMl8xiQzd-1VkWB_HEasAxkDI" },
+
+  
+  
+];
+
+
+// ฟังก์ชันตรวจสอบพารามิเตอร์ใน URL และกรองข้อมูล
+function getFilteredData() {
+  const params = new URLSearchParams(window.location.search);
+  const start = parseInt(params.get("start"), 10) || 0; // ค่าเริ่มต้น 0 ถ้าไม่มี start
+  const end = parseInt(params.get("end"), 10) || data.length; // ค่าเริ่มต้นคือความยาวของ data ถ้าไม่มี end
+
+  // กรองข้อมูลในช่วงที่กำหนด
+  return data.filter(item => item.id >= start && item.id <= end);
+}
+
+function loadApp() {
+  const filteredData = getFilteredData(); // กรองข้อมูลตามพารามิเตอร์ใน URL
+
+  // สร้างเนื้อหาสำหรับ Flipbook
+  const flipbook = document.querySelector('.flipbook');
+  flipbook.innerHTML = ''; // ล้างเนื้อหาที่มีอยู่ก่อนหน้า
+
+  filteredData.forEach((row) => {
+    // สร้างเนื้อหา HTML ด้วย template string
+    const pageHTML = `
+      <div style="background-image: url(${row.imageUrl}); background-size: contain; "></div>
+    `;
+    flipbook.innerHTML += pageHTML; // เพิ่ม HTML ที่สร้างขึ้นลงใน flipbook
+  });
+
+  // อัปเดตเลขหน้าตอนเริ่มต้น
+  const pageIndicator = document.getElementById('page-indicator');
+  pageIndicator.textContent = `Page 1/${filteredData.length}`;
+
+  // เรียกใช้ Turn.js
+  $('.flipbook').turn({
+    width: 922,
+    height: 600,
+    elevation: 50,
+    duration: 1200,
+    gradients: true,
+    autoCenter: true,
+    when: {
+      turning: function (event, page) {
+        // อัปเดตเลขหน้าที่กำลังเปลี่ยน
+        pageIndicator.textContent = `Page ${page}/${filteredData.length}`;
+      },
+      turned: function (event, page) {
+        // อัปเดตเลขหน้าหลังเปลี่ยนเสร็จ
+        pageIndicator.textContent = `Page ${page}/${filteredData.length}`;
+      },
+    },
+  });
+}
+
+
+
+// ปุ่มสำหรับเปลี่ยนหน้า
+$('#prevPage').on('click', function () {
+  $('.flipbook').turn('previous');
+});
+
+$('#nextPage').on('click', function () {
+  $('.flipbook').turn('next');
+});
+
+// โหลด Turn.js และเรียกฟังก์ชัน loadApp
+yepnope({
+  test: Modernizr.csstransforms,
+  yep: ['https://cmfrozen.com/e-book/lib/turn.js'],
+  nope: ['https://cmfrozen.com/e-book/lib/turn.html4.js'],
+  both: ['https://cmfrozen.com/e-book/samples/basic/css/basic.css'],
+  complete: loadApp,
+});
+  
+  let zoomLevel = 1;
+
+document.getElementById('zoomIn').addEventListener('click', function() {
+  zoomLevel += 0.1;
+  $(".flipbook").turn("zoom", zoomLevel);
+  adjustZoom(); // เรียกใช้ฟังก์ชันเพื่อปรับการเลื่อนเมื่อซูม
+});
+
+document.getElementById('zoomOut').addEventListener('click', function() {
+  zoomLevel -= 0.1;
+  $(".flipbook").turn("zoom", zoomLevel);
+  adjustZoom(); // เรียกใช้ฟังก์ชันเพื่อปรับการเลื่อนเมื่อซูม
+});
+
+function adjustZoom() {
+  // ตรวจสอบว่าซูมใหญ่เกินไปหรือไม่ ถ้าใช่ให้เปิดการเลื่อน
+  if (zoomLevel > 1) {
+    document.querySelector('.flipbook-viewport').style.overflow = 'auto';
+  } else {
+    document.querySelector('.flipbook-viewport').style.overflow = 'hidden';
+  }
+}
+
+
+  
+</script>
+
+
+  
+  <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+  
+</body>
+</html>
