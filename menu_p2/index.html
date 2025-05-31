@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>บทเรียนการพยาบาลผู้ใหญ่</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    
+    body {
+      background-image: url('https://lh3.googleusercontent.com/d/1OAmNYUz5au_hP1Bjurc303N3Mxk4BABw');
+      background-size: cover; /* ปรับขนาดให้เหมาะสมกับหน้าจอ */
+      background-position: center center; /* ให้ภาพอยู่ตรงกลาง */
+      background-repeat: no-repeat; /* ไม่ให้ภาพซ้ำ */
+      min-height: 100vh; /* ให้พื้นหลังครอบคลุมทั้งความสูงของหน้าจอ */
+    }
+
+    /* กำหนดขนาดของแถบเลื่อน */
+    .scrollable-menu {
+      max-height: 70vh; /* กำหนดความสูงของพื้นที่แสดงเมนู */
+      overflow-y: auto; /* ให้แถบเลื่อนในแนวตั้ง */
+    }
+   /* สำหรับหน้าจอขนาดเล็ก (โทรศัพท์) */
+    @media screen and (max-width: 480px) {
+      .credit {
+        font-size: 12px; /* ลดขนาดตัวอักษร */
+        padding: 8px 16px; /* ลดระยะห่างภายใน */
+        bottom: 5px; /* ลดระยะห่างจากขอบล่าง */
+        right: 5px;  /* ลดระยะห่างจากขอบขวา */
+      }
+    }
+        /* กำหนดให้ Credit อยู่มุมขวาล่าง */
+    .credit {
+      position: fixed;
+      bottom: 10px; /* ระยะห่างจากขอบล่าง */
+      right: 10px;  /* ระยะห่างจากขอบขวา */
+      background-color: rgba(0, 0, 0, 0.5); /* พื้นหลังโปร่งใส */
+      color: white;  /* ข้อความสีขาว */
+      padding: 10px 20px; /* เพิ่มระยะห่างภายใน */
+      border-radius: 5px; /* มุมโค้ง */
+      font-size: 14px; /* ขนาดตัวอักษร */
+    }
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+  <!-- Navbar -->
+  <nav class="bg-pink-400 bg-opacity-30 p-4">
+    <div class="container mx-auto text-white text-center">
+      <span class="text-lg font-semibold">บทเรียนวิชาพยาบาลการพยาบาลผู้ใหญ่</span><span class="ms-3" id="countbook"></span>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="pt-4 flex flex-col items-center justify-center">
+    <div class="w-full max-w-4xl p-6 bg-white bg-opacity-30 rounded-lg shadow-lg">
+      <div id="menu" class="scrollable-menu mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <!-- ลิงก์จะถูกสร้างแบบ dynamic ที่นี่ -->
+      </div>
+    </div>
+  </main>
+  <!-- Credit Bar -->
+  <div class="credit">
+    <span>Developed By: Waroonporn Rat. || 2025 <span class="circle">©</span></span>
+  </div>
+  <script>
+    
+    
+    
+    
+    // ฟังก์ชันสร้างเมนูแบบ Dynamic
+function createMenu(data) {
+  // console.log(data);
+  document.getElementById('countbook').innerText = "จำนวนบทเรียน : " + data.length + " บทเรียน"
+  const menuDiv = document.getElementById('menu');
+  data.forEach(item => {
+    const { id, title, teach, start, end, project, img } = item;
+    const link = `
+      <a href="https://greengramhouse.github.io/turn_js_nurse/n2.html?start=${start}&end=${end}" 
+         class="flex flex-col items-center">
+        <img src="${img}?text=Book+${project}" alt="Book ${project}" class="w-40 h-52 object-cover rounded-lg shadow-lg hover:scale-105 transform transition">
+        <span class="mt-4 text-center font-bold text-blue-800 bg-gray-400 bg-opacity-30">${title}</span>
+      </a>`;
+    menuDiv.innerHTML += link;
+  });
+}
+
+    // ดึงข้อมูลด้วย google.script.run
+    window.onload = function() {
+      // google.script.run.withSuccessHandler(createMenu).getdata();
+      const data = [
+                      {
+                          "id": 1,
+                          "title": "การพยาบาลผู้ป่วยที่มีความผิดปกตินรีเวชที่เกี่ยวข้องกับความผิดปกติของเซลล์",
+                          "teach": "ครูกานดา",
+                          "start": 0,
+                          "end": 14,
+                          "project": "A",
+                          "img": "https://lh3.googleusercontent.com/d/1ePQwkdMzGyHtJpF6elQwid_Avz0DJY0E"
+                      },
+                      {
+                          "id": 2,
+                          "title": "การพยาบาลผู้ป่วยที่มีความผิดปกตินรีเวชที่เกี่ยวข้องกับความผิดปกติของประจำเดือน",
+                          "teach": "ครูกานดา",
+                          "start": 15,
+                          "end": 41,
+                          "project": "ฺB",
+                          "img": "https://lh3.googleusercontent.com/d/1_Y8t0Xr8A9y4zc-4S6ggzJAgRdlZ7WFo"
+                      }, 
+                      {
+                          "id": 3,
+                          "title": "การพยาบาลผู้ป่วยระบบทางเดินหายใจชนิดไม่ติดเชื้อ",
+                          "teach": "ครูกานดา",
+                          "start": 42,
+                          "end": 67,
+                          "project": "ฺB",
+                          "img": "https://lh3.googleusercontent.com/d/1B9rcwkM8oXOQaTbT0Xm5oR4t4Ru5JqDj"
+                          
+                      },   
+                      {
+                          "id": 4,
+                          "title": "การพยาบาลผู้ป่วยศัลยกรรมระบบทางเดินหายใจและการฟื้นฟู",
+                          "teach": "ครูกานดา",
+                          "start": 68,
+                          "end": 76,
+                          "project": "ฺB",
+                          "img": "https://lh3.googleusercontent.com/d/1DCKnr7c195JugSxRFeaYrDlWE_mDb4ae"
+                      }, 
+                      {
+                          "id": 5,
+                          "title": "การพยาบาลผู้ป่วยระบบหัวใจและหลอดเลือด",
+                          "teach": "ครูกานดา",
+                          "start": 511,
+                          "end": 521,
+                          "project": "ฺB",
+                          "img": "https://lh3.googleusercontent.com/d/1z9m4IZQxZhk07RxUYA9fsNzHNn3GoBMK"
+                      },      
+                      {
+                          "id": 6,
+                          "title": "การพยาบาลผู้ป่วยที่มีความผิดปกติการเคลื่อนไหวและประสาทสัมผัส 1",
+                          "teach": "ครูกานดา",
+                          "start": 81,
+                          "end": 121,
+                          "project": "ฺB",
+                          "img": "https://lh3.googleusercontent.com/d/1J0iSZ9So_Xuub_d7TWEAWXqZJCUjqFHx"
+                      },      
+                      {
+                          "id": 7,
+                          "title": "การพยาบาลผู้ป่วยที่มีความผิดปกติการเคลื่อนไหวและประสาทสัมผัส 2",
+                          "teach": "ครูกานดา",
+                          "start": 122,
+                          "end": 145,
+                          "project": "ฺB",
+                          "img": "https://lh3.googleusercontent.com/d/1881OcgHxvh98YE7xY2iPTv_u6TLLU6rT"
+                      }, 
+                      {
+                          "id": 8,
+                          "title": "การพยาบาลผู้ป่วยที่มีความผิดปกติการเคลื่อนไหวและประสาทสัมผัส 3",
+                          "teach": "ครูกานดา",
+                          "start": 146,
+                          "end": 167,
+                          "project": "ฺB",
+                          "img": "https://lh3.googleusercontent.com/d/1I9duEP1gi1TPuc0feKzBMKVlv1gQeTj2"
+                      }, 
+                      {
+                          "id": 9,
+                          "title": "การพยาบาลผู้ป่วยระบบหู คอ จมูก",
+                          "teach": "ครูกานดา",
+                          "start": 168,
+                          "end": 171,
+                          "project": "ฺB",
+                          "img": "https://lh3.googleusercontent.com/d/10x-81NDNCJKyP_AJ3li14VbHfEdOtnM1"
+                      },  
+                      {
+                          "id": 10,
+                          "title": "การพยาบาลผู้ป่วยระบบทางเดินอาหารส่วนบน",
+                          "teach": "ครูกานดา",
+                          "start": 172,
+                          "end": 179,
+                          "project": "ฺB",
+                          "img": "https://lh3.googleusercontent.com/d/14FdHUjuhGQJX1amT4T5Xd7Y-JzcqCah7"
+                      },  
+                      {
+                          "id": 11,
+                          "title": "การพยาบาลผู้ป่วยระบบทางเดินอาหารส่วนล่าง",
+                          "teach": "ครูกานดา",
+                          "start": 522,
+                          "end": 538,
+                          "project": "ฺB",
+                          "img": "https://lh3.googleusercontent.com/d/14EEq6XGkidRTF3QfqFe-rjOhR34PDpXA"
+                      },  
+                      {
+                          "id": 12,
+                          "title": "การพยาบาลผู้ป่วยที่มีความผิดปกติของตับ",
+                          "teach": "ครูกานดา",
+                          "start": 189,
+                          "end": 208,
+                          "project": "ฺB",
+                          "img": "https://lh3.googleusercontent.com/d/1i7SjI7Ol5P3BnDawOoSbo0Fe9ZA1k89e"
+                      }, 
+                      {
+                          "id": 13,
+                          "title": "การพยาบาลผู้ป่วยที่มีความผิดปกติของตับอ่อนและน้ำดี",
+                          "teach": "ครูกานดา",
+                          "start": 209,
+                          "end": 235,
+                          "project": "ฺB",
+                          "img": "https://lh3.googleusercontent.com/d/1VtmyLoatd6nw_Mwx7LxaNBTu1w00rAjK"
+                      },    
+                      {
+                          "id": 14,
+                          "title": "การพยาบาลผู้ป่วยเบาหวาน",
+                          "teach": "ครูกานดา",
+                          "start": 236,
+                          "end": 259,
+                          "project": "ฺB",
+                          "img": "https://lh3.googleusercontent.com/d/1p-g4jV2hFNegb6-JYJOnOm6ZbqdoysEZ"
+                      },  
+                      {
+                          "id": 15,
+                          "title": "การพยาบาลผู้ป่วยที่มีความผิดปกติของต่อมใต้สมอง ต่อมหมวกไต และพาราธัยรอยด์",
+                          "teach": "ครูกานดา",
+                          "start": 260,
+                          "end": 291,
+                          "project": "ฺB",
+                          "img": "https://lh3.googleusercontent.com/d/1se72DzIugmesbg0zbFb02bSFDcgDuAnu"
+                      }, 
+                      {
+                          "id": 16,
+                          "title": "การพยาบาลผู้ป่วยที่มีความผิดปกติของสมดุลน้ำ และอิเล็กโทรไลต์ ตอนที่ 1",
+                          "teach": "ครูกานดา",
+                          "start": 539,
+                          "end": 558,
+                          "project": "ฺB",
+                          "img": "https://lh3.googleusercontent.com/d/1zSzLmlnBUiD5YpTbKvbX_vZ5_mU25Sjh"
+                      }, 
+                      {
+                          "id": 17,
+                          "title": "การพยาบาลผู้ป่วยที่มีความผิดปกติของสมดุลน้ำ และอิเล็กโทรไลต์ ตอนที่ 2",
+                          "teach": "ครูกานดา",
+                          "start": 299,
+                          "end": 306,
+                          "project": "ฺB",
+                          "img": "https://lh3.googleusercontent.com/d/1-fcjqYnj0uT19mjw3IkOD4NxinFw0klk"
+                      }, 
+                      {
+                          "id": 18,
+                          "title": "การพยาบาลผู้ป่วยวัณโรค",
+                          "teach": "ครูกานดา",
+                          "start": 307,
+                          "end": 314,
+                          "project": "ฺB",
+                          "img": "https://lh3.googleusercontent.com/d/1rLyDdlv70jMpM5Vfyj6qbOaYW7UEwsYv"
+                      }, 
+                      {
+                          "id": 19,
+                          "title": "การพยาบาลผู้ป่วยที่มีความผิดปกติระบบผิวหนัง",
+                          "teach": "ครูกานดา",
+                          "start": 559,
+                          "end": 600,
+                          "project": "ฺB",
+                          "img": "https://lh3.googleusercontent.com/d/1XzMO70fpprYR0ve4hoZPvUxd14djd5MV"
+                      }, 
+                      {
+                          "id": 20,
+                          "title": "การพยาบาลผู้ป่วยที่มีความผิดปกติระบบภูมิคุ้มกัน",
+                          "teach": "ครูกานดา",
+                          "start": 601,
+                          "end": 656,
+                          "project": "ฺB",
+                          "img": "https://lh3.googleusercontent.com/d/10gt-UgFIMvTcL26OIJY4K8wsmlVq5SKe"
+                      }, 
+                      {
+                          "id": 21,
+                          "title": "การพยาบาลผู้ป่วยที่มีความผิดปกติของไตและกรวยไต",
+                          "teach": "ครูกานดา",
+                          "start": 657,
+                          "end": 686,
+                          "project": "ฺB",
+                          "img": "https://lh3.googleusercontent.com/d/1S2dSt_gulOUAoWLuIR_Hyblk2Pofpy2p"
+                      }, 
+                      {
+                          "id": 22,
+                          "title": "การพยาบาลผู้ป่วยที่มีความผิดปกติของทางเดินปัสสาวะ ตอนที่ 1",
+                          "teach": "ครูกานดา",
+                          "start": 385,
+                          "end": 392,
+                          "project": "ฺB",
+                          "img": "https://lh3.googleusercontent.com/d/1661tATpjOF14zfNOTEOjYkbx20f7EaK3"
+                      }, 
+                      {
+                          "id": 20,
+                          "title": "การพยาบาลผู้ป่วยที่มีความผิดปกติของทางเดินปัสสาวะ ตอนที่ 2",
+                          "teach": "ครูกานดา",
+                          "start": 393,
+                          "end": 422,
+                          "project": "ฺB",
+                          "img": "https://lh3.googleusercontent.com/d/1B6lGdMDh1TE5sYlQnQn6MGSyhoxxcdzg"
+                      }, 
+                      {
+                          "id": 23,
+                          "title": "การพยาบาลผู้ป่วยที่มีนิ่วในระบบทางเดินปัสสาวะ",
+                          "teach": "ครูกานดา",
+                          "start": 423,
+                          "end": 435,
+                          "project": "ฺB",
+                          "img": "https://lh3.googleusercontent.com/d/1U-6yvgp_1l5yVtgY97GeEFLx9-cPkL8W"
+                      }, 
+                      {
+                          "id": 24,
+                          "title": "การพยาบาลผู้ป่วยที่มีความผิดปกติต่อมลูกหมาก",
+                          "teach": "ครูกานดา",
+                          "start": 436,
+                          "end": 453,
+                          "project": "ฺB",
+                          "img": "https://lh3.googleusercontent.com/d/1mr1_zM3kWyMe9Ddb5auCeOOEskDRbXtC"
+                      }, 
+                      {
+                          "id": 25,
+                          "title": "การพยาบาลผู้ป่วยที่ได้รับการบำบัดทดแทนหน้าที่ไต",
+                          "teach": "ครูกานดา",
+                          "start": 454,
+                          "end": 486,
+                          "project": "ฺB",
+                          "img": "https://lh3.googleusercontent.com/d/1mXSqE3SMc5TzkEFs_pdVYBcgArKX5lcT"
+                      },      
+                      {
+                          "id": 26,
+                          "title": "การพยาบาลผู้ป่วยที่ได้รับยากดภูมิคุ้มกัน",
+                          "teach": "ครูกานดา",
+                          "start": 487,
+                          "end": 492,
+                          "project": "ฺB",
+                          "img": "https://lh3.googleusercontent.com/d/1kb4dNhz1fn791yDswbdCJk3_GhzRB_KG"
+                      },  
+                      {
+                          "id": 27,
+                          "title": "การพยาบาลผู้ป่วยมะเร็ง",
+                          "teach": "ครูกานดา",
+                          "start": 687,
+                          "end": 699,
+                          "project": "ฺB",
+                          "img": "https://lh3.googleusercontent.com/d/1qWxGPwBQPm7mqNE247lSYn5HKnaKALUQ"
+                      },   
+                      {
+                          "id": 28,
+                          "title": "การพยาบาลผุ้ป่วยมะเร็งกระเพาะปัสสาวะ",
+                          "teach": "ครูกานดา",
+                          "start": 497,
+                          "end": 504,
+                          "project": "ฺB",
+                          "img": "https://lh3.googleusercontent.com/d/1ShV9I_9b2FtqxDd8hoTjHN1KNCfC3LQz"
+                      },   
+                      {
+                          "id": 29,
+                          "title": "การพยาบาลผู้ป่วยมะเร็งเต้านม",
+                          "teach": "ครูกานดา",
+                          "start": 505,
+                          "end": 507,
+                          "project": "ฺB",
+                          "img": "https://lh3.googleusercontent.com/d/1y5eGMgeE0qGYXqz9l7mgTcHygFoImfWk"
+                      },   
+                      {
+                          "id": 30,
+                          "title": "การพยาบาลผู้ป่วยมะเร็งลำไส้",
+                          "teach": "ครูกานดา",
+                          "start": 700,
+                          "end": 712,
+                          "project": "ฺB",
+                          "img": "https://lh3.googleusercontent.com/d/1j4CvPsrJR06CeIDAFqCbIpQVMbdr2tc3"
+                      },  
+                      {
+                          "id": 31,
+                          "title": "แนวคิดหลักการพยาบาลสาธารณภัย",
+                          "teach": "ครูกานดา",
+                          "start": 713,
+                          "end": 732,
+                          "project": "ฺB",
+                          "img": "https://lh3.googleusercontent.com/d/1G6kD-vqvr7z_-trBogywIU_bH2q5N3PK"
+                      },          
+                      {
+                          "id": 31,
+                          "title": "แนวคิดหลักการพยาบาลฉุกเฉิน",
+                          "teach": "ครูกานดา",
+                          "start": 733,
+                          "end": 779,
+                          "project": "ฺB",
+                          "img": "https://lh3.googleusercontent.com/d/19ufJKS-0maCX3e3uisvUiaYPmepRQXmq"
+                      },      
+                      {
+                          "id": 32,
+                          "title": "ระบบบริการการแพทย์ฉุกเฉิน",
+                          "teach": "ครูกานดา",
+                          "start": 780,
+                          "end": 798,
+                          "project": "ฺB",
+                          "img": "https://lh3.googleusercontent.com/d/1b6ycLTaQdNSVc3bXitELFBldN7vZ1UYY"
+                      }, 
+                      {
+                          "id": 84,
+                          "title": "การพยาบาลผู้ป่วยที่มีภาวะช็อก",
+                          "teach": "ครูกานดา",
+                          "start": 799,
+                          "end": 817,
+                          "project": "ฺB",
+                          "img": "https://lh3.googleusercontent.com/d/1FdSNEFnB7ENDNQ1z-W7ucJ-2cwdNgX1B"
+                      },         
+                      {
+                          "id": 85,
+                          "title": "การพยาบาลผู้ป่วยที่มีภาวะระบบหายใจล้มเหลว",
+                          "teach": "ครูกานดา",
+                          "start": 818,
+                          "end": 832,
+                          "project": "ฺB",
+                          "img": "https://lh3.googleusercontent.com/d/1q0btl4ek7x708NfkhC7SYCERdS9GVKLs"
+                      },         
+                      {
+                          "id": 86,
+                          "title": "การจัดการทางเดินหายใจ",
+                          "teach": "ครูกานดา",
+                          "start": 833,
+                          "end": 856,
+                          "project": "ฺB",
+                          "img": "https://lh3.googleusercontent.com/d/1qmm9Ru1f6NG9ALMgVq5VTHJtfgcIDYoc"
+                      },          
+                      {
+                          "id": 87,
+                          "title": "การพยาบาลผู้ป่วยไฟไหม้น้ำร้อนลวก",
+                          "teach": "ครูกานดา",
+                          "start": 857,
+                          "end": 897,
+                          "project": "ฺB",
+                          "img": "https://lh3.googleusercontent.com/d/1IxxdJ9A4s0birb4J19cY8FSHyUAyfPOS"
+                      },    
+                      {
+                          "id": 88,
+                          "title": "ช่วยเหลือผู้ประสบภัยและการฟื้นฟูสุขภาพ",
+                          "teach": "ครูกานดา",
+                          "start": 898,
+                          "end": 914,
+                          "project": "ฺB",
+                          "img": "https://lh3.googleusercontent.com/d/1RJz2TjXLKLvo5GBiIMtIShX7sEiINfFX"
+                      },
+                      {
+                          "id": 89,
+                          "title": "การพยาบาลผู้ที่มีภาวะหัวใจหยุดเต้นขั้นสูง ACLS",
+                          "teach": "ครูกานดา",
+                          "start": 915,
+                          "end": 928,
+                          "project": "ฺB",
+                          "img": "https://lh3.googleusercontent.com/d/1WeoBfaP8U2Myyqz63L7bhfiblNJ7NC99"
+                      },   
+                      {
+                          "id": 90,
+                          "title": "การพยาบาลผู้ป่วยที่ได้รับสารพิษ",
+                          "teach": "ครูกานดา",
+                          "start": 929,
+                          "end": 941,
+                          "project": "ฺB",
+                          "img": "https://lh3.googleusercontent.com/d/1aU7pBvjE3GuD6JA5j7vxfOM3pU-IjABC"
+                      },          
+        
+        
+        
+                  ]
+
+      createMenu(data)
+    };
+  </script>
+
+</body>
+</html>
