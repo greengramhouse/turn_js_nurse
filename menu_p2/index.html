@@ -6,6 +6,28 @@
   <title>บทเรียนการพยาบาลผู้ใหญ่</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
+  #maintenance {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ff0000;
+  }
+
+  #app-content {
+    display: none; /* ซ่อนเนื้อหาเว็บไซต์ */
+  }
+
+
     
     body {
       background-image: url('https://lh3.googleusercontent.com/d/1OAmNYUz5au_hP1Bjurc303N3Mxk4BABw');
@@ -43,6 +65,12 @@
   </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
+<div id="maintenance">
+  🚧 เว็บไซต์นี้งดให้บริการชั่วคราว กรุณากลับมาใหม่ภายหลัง 🚧
+</div>
+
+<div id="app-content">
+
 
   <!-- Navbar -->
   <nav class="bg-pink-400 bg-opacity-30 p-4">
@@ -59,10 +87,17 @@
       </div>
     </div>
   </main>
+
+</div>
+  
+  
   <!-- Credit Bar -->
   <div class="credit">
     <span>Developed By: Waroonporn Rat. || 2025 <span class="circle">©</span></span>
   </div>
+
+  
+  
   <script>
     
     
