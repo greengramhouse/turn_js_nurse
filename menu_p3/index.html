@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <base target="_top" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>บทเรียนการพยาบาลผู้ใหญ่</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=K2D:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap");
+
+      #maintenance {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 9999;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.95);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #ff0000;
+      }
+
+      body {
+        font-family: "K2D", sans-serif;
+        /* background-image: url("https://lh3.googleusercontent.com/d/1OAmNYUz5au_hP1Bjurc303N3Mxk4BABw"); */
+        background-size: cover; /* ปรับขนาดให้เหมาะสมกับหน้าจอ */
+        background-position: center center; /* ให้ภาพอยู่ตรงกลาง */
+        background-repeat: no-repeat; /* ไม่ให้ภาพซ้ำ */
+        min-height: 100vh; /* ให้พื้นหลังครอบคลุมทั้งความสูงของหน้าจอ */
+      }
+
+      /* กำหนดขนาดของแถบเลื่อน */
+      .scrollable-menu {
+        max-height: 70vh; /* กำหนดความสูงของพื้นที่แสดงเมนู */
+        overflow-y: auto; /* ให้แถบเลื่อนในแนวตั้ง */
+      }
+      /* สำหรับหน้าจอขนาดเล็ก (โทรศัพท์) */
+      @media screen and (max-width: 480px) {
+        .credit {
+          font-size: 12px; /* ลดขนาดตัวอักษร */
+          padding: 8px 16px; /* ลดระยะห่างภายใน */
+          bottom: 5px; /* ลดระยะห่างจากขอบล่าง */
+          right: 5px; /* ลดระยะห่างจากขอบขวา */
+        }
+      }
+      /* กำหนดให้ Credit อยู่มุมขวาล่าง */
+      .credit {
+        position: fixed;
+        bottom: 10px; /* ระยะห่างจากขอบล่าง */
+        right: 10px; /* ระยะห่างจากขอบขวา */
+        background-color: rgba(0, 0, 0, 0.5); /* พื้นหลังโปร่งใส */
+        color: white; /* ข้อความสีขาว */
+        padding: 10px 20px; /* เพิ่มระยะห่างภายใน */
+        border-radius: 5px; /* มุมโค้ง */
+        font-size: 14px; /* ขนาดตัวอักษร */
+      }
+    </style>
+  </head>
+  <body class="bg-green-100 min-h-screen flex flex-col">
+    <!-- <div id="maintenance">
+  ขออภัยค่ะ อยู่ในช่วง try out 
+  🚧 เว็บไซต์นี้งดให้บริการชั่วคราว กรุณากลับมาใหม่ภายหลัง วันที่ 5 สิงหาคม 2568 🚧
+</div> -->
+
+    <!-- <div id="app-content"> -->
+
+    <!-- Navbar -->
+    <nav class="bg-green-400 bg-opacity-30 p-4">
+      <div class="container mx-auto text-green-700 text-center">
+        <span class="text-lg font-semibold"
+          >บทเรียนวิชาการพยาบาลสุขภาพจิตและจิตเวชศาสตร์</span
+        ><span class="ms-3" id="countbook"></span>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-4 flex flex-col items-center justify-center">
+      <div
+        class="w-full max-w-4xl p-6 bg-white bg-opacity-30 rounded-lg shadow-lg"
+      >
+        <div
+          id="menu"
+          class="scrollable-menu mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4"
+        >
+          <!-- ลิงก์จะถูกสร้างแบบ dynamic ที่นี่ -->
+        </div>
+      </div>
+    </main>
+
+    <!-- </div> -->
+
+    <!-- Credit Bar -->
+    <div class="credit">
+      <span class="text-xs"
+        >Developed By: Waroonporn Rat. || 2025
+        <span class="circle">©</span></span
+      >
+    </div>
+
+    <script>
+      // ฟังก์ชันสร้างเมนูแบบ Dynamic
+      function createMenu(data) {
+        // console.log(data);
+        document.getElementById("countbook").innerText =
+          "จำนวนบทเรียน : " + data.length + " บทเรียน";
+        const menuDiv = document.getElementById("menu");
+        data.forEach((item) => {
+          const { id, title, teach, start, end, project, img } = item;
+          const link = `
+      <a href="http://127.0.0.1:5500/contentnurse3.html?start=${start}&end=${end}" 
+         class="flex flex-col items-center">
+        <img src="${img}?text=Book+${project}" alt="Book ${project}" class="w-40 h-52 object-cover rounded-lg shadow-lg hover:scale-105 transform transition">
+        <span class="mt-4 text-center font-bold text-green-700 bg-gray-400 bg-opacity-30">${title}</span>
+      </a>`;
+          menuDiv.innerHTML += link;
+        });
+      }
+
+      // ดึงข้อมูลด้วย google.script.run
+      window.onload = function () {
+        // google.script.run.withSuccessHandler(createMenu).getdata();
+        const data = [
+          {
+            id: 1,
+            title: "แนวคิดทฤษฎีที่สำคัญทางจิตเวช",
+            teach: "ครูกานดา",
+            start: 0,
+            end: 11,
+            project: "A",
+            img: "https://lh3.googleusercontent.com/d/1AOH02G8jBI4cWjeRgSrfEt4oQhgNHQ-_",
+          },
+
+        ];
+
+        createMenu(data);
+      };
+    </script>
+  </body>
+</html>
