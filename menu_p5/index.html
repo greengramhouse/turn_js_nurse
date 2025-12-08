@@ -1,1 +1,251 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <base target="_top" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>บทเรียนการพยาบาลมารดาและทารก</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=K2D:wght@200;300;400;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['K2D', 'sans-serif'],
+            },
+            colors: {
+              wood: {
+                100: '#F3E5AB',
+                300: '#DEB887',
+                500: '#CD853F',
+                700: '#8B4513',
+                800: '#5D4037',
+              },
+              pastel: {
+                pink: '#FFD1DC',
+                darkPink: '#D68C9A',
+              }
+            },
+            boxShadow: {
+              'book': '5px 5px 15px rgba(0,0,0,0.3)',
+              'shelf': '0 10px 10px -5px rgba(0,0,0,0.5)',
+            }
+          }
+        }
+      }
+    </script>
 
+    <style>
+      body {
+        /* พื้นหลังลายไม้แบบ Soft หรือสีผนังห้อง */
+        background-color: #fdf2f8; /* Pink-50 equivalent */
+        background-image: radial-gradient(#db2777 0.5px, transparent 0.5px), radial-gradient(#db2777 0.5px, #fdf2f8 0.5px);
+        background-size: 20px 20px;
+        background-position: 0 0, 10px 10px;
+        min-height: 100vh;
+      }
+
+      /* Book Spine Effect on Hover */
+      .book-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        transform-style: preserve-3d;
+      }
+      
+      .book-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        z-index: 10;
+      }
+
+      /* Scrollbar Customization */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.5);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #D68C9A;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #be185d;
+      }
+    </style>
+  </head>
+  <body class="flex flex-col min-h-screen font-sans text-gray-800">
+
+    <!-- Header / Navbar -->
+    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md shadow-md border-b-4 border-pink-300">
+      <div class="container mx-auto px-4 py-3 flex flex-col sm:flex-row justify-between items-center gap-2">
+        <div class="flex items-center gap-3">
+            <div class="bg-pink-500 text-white p-2 rounded-lg shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+            </div>
+            <h1 class="text-xl sm:text-2xl font-bold text-pink-700 tracking-wide">Maternity Nursing</h1>
+        </div>
+        <span id="countbook" class="px-4 py-1 bg-pink-100 text-pink-800 rounded-full text-sm font-semibold shadow-inner">
+            กำลังโหลดข้อมูล...
+        </span>
+      </div>
+    </nav>
+
+    <!-- Main Content: Bookshelf -->
+    <main class="flex-grow container mx-auto px-4 py-8">
+      <!-- Title Section -->
+      <div class="text-center mb-10">
+        <h2 class="text-3xl font-bold text-gray-800 mb-2 drop-shadow-sm">บทเรียนวิชาการพยาบาลมารดาและทารก</h2>
+        <p class="text-gray-600">เลือกหนังสือเรียนที่ต้องการศึกษา</p>
+      </div>
+
+      <!-- Books Grid (The Shelf) -->
+      <!-- ปรับ grid-cols เพื่อความ responsive: 
+           มือถือเล็ก: 1 แถว, มือถือใหญ่: 2 แถว, Tablet: 3 แถว, Desktop: 4 แถว -->
+      <div id="menu" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-12">
+        <!-- Content will be injected here by JS -->
+      </div>
+    </main>
+
+    <!-- Footer / Credit -->
+    <footer class="bg-gray-800 text-white py-4 mt-auto">
+      <div class="container mx-auto px-4 text-center">
+        <p class="text-sm opacity-80">
+          Developed By: Waroonporn Rat. || 2025 <span class="text-pink-400">©</span>
+        </p>
+        <p class="text-xs text-gray-400 mt-1">สื่อการสอนอิเล็กทรอนิกส์เพื่อการพยาบาล</p>
+      </div>
+    </footer>
+
+    <script>
+      // Function to generate the bookshelf layout
+      function createMenu(data) {
+        const menuDiv = document.getElementById("countbook");
+        menuDiv.innerText = `มีทั้งหมด ${data.length} บทเรียน`;
+        
+        const container = document.getElementById("menu");
+        container.innerHTML = ""; // Clear loading text
+
+        data.forEach((item) => {
+          const { id, title, teach, start, end, project, img } = item;
+          
+          // HTML Structure for a single book on a shelf
+          const bookHTML = `
+            <div class="relative group flex flex-col items-center">
+                <!-- Link Wrapper -->
+                <a href="https://greengramhouse.github.io/turn_js_nurse/n4.html?start=${start}&end=${end}" 
+                   class="relative w-full flex flex-col items-center z-10 transition-transform duration-300">
+                    
+                    <!-- The Book Itself -->
+                    <div class="book-card relative w-44 h-64 sm:w-48 sm:h-72 bg-white rounded-r-md rounded-l-sm shadow-book overflow-hidden cursor-pointer border-l-4 border-gray-300/50">
+                        <!-- Book Cover Image -->
+                        <img src="${img}" alt="${title}" 
+                             class="w-full h-full object-cover opacity-95 group-hover:opacity-100 transition-opacity"
+                             onerror="this.src='https://placehold.co/300x400/pink/white?text=${project}'">
+                        
+                        <!-- Sheen/Gloss effect on cover -->
+                        <div class="absolute inset-0 bg-gradient-to-tr from-black/10 via-white/10 to-transparent pointer-events-none"></div>
+                        
+                        <!-- Side Spine highlight (Left side) -->
+                        <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-white/30 z-20"></div>
+                    </div>
+
+                    <!-- Book Info (appears below/on the shelf) -->
+                    <div class="mt-4 w-full px-2 text-center relative z-20">
+                        <div class="bg-white/90 backdrop-blur-sm p-3 rounded-lg shadow-sm border border-pink-100 min-h-[80px] flex flex-col justify-center transform transition group-hover:scale-105">
+                            <h3 class="text-sm font-bold text-gray-800 leading-tight line-clamp-2 mb-1" title="${title}">${title}</h3>
+                            <p class="text-xs text-pink-600 font-medium">สอนโดย: ${teach}</p>
+                            <span class="text-[10px] text-gray-400 mt-1">หน้า ${start}-${end}</span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- The Shelf Plank (Underneath the book) -->
+                <div class="absolute bottom-[6.5rem] w-[120%] h-4 bg-wood-700 rounded-sm shadow-shelf transform translate-y-2 z-0">
+                   <div class="w-full h-full bg-gradient-to-b from-wood-500 to-wood-800 opacity-90"></div>
+                </div>
+            </div>
+          `;
+          
+          container.innerHTML += bookHTML;
+        });
+      }
+
+      // Load Data
+      window.onload = function () {
+        // Mock Data (ใช้ข้อมูลเดิมของคุณ)
+        const data = [
+          {
+            id: 1,
+            title: "Introduction to maternity care",
+            teach: "ครูกานดา",
+            start: 0,
+            end: 15,
+            project: "A",
+            img: "https://lh3.googleusercontent.com/d/1LZs8TV8DAWUSdTuphyy5Aptnna-Gbm8P",
+          },
+          {
+            id: 2,
+            title: "Basic concepts of Reproductive Health and contraception",
+            teach: "ครูกานดา",
+            start: 16,
+            end: 42,
+            project: "B",
+            img: "https://lh3.googleusercontent.com/d/1eAHeKKONqK0-iejiiXECoA80nXOl5nCe",
+          },
+          {
+            id: 3,
+            title: "Physiological and psychosocial changes during pregnancy and antenatal care",
+            teach: "ครูกานดา",
+            start: 43,
+            end: 69,
+            project: "C",
+            img: "https://lh3.googleusercontent.com/d/1RUqsR2TGnaySfVmMFoPH8XcsLT3XypLr",
+          },
+          {
+            id: 4,
+            title: "Nursing care during labour and delivery",
+            teach: "ครูกานดา",
+            start: 70,
+            end: 75,
+            project: "D",
+            img: "https://lh3.googleusercontent.com/d/1TeGc9HRrhr_5Ph31jnty4soQKbQOSvHt",
+          },
+          {
+            id: 5,
+            title: "Nursing care during the Postpartum period",
+            teach: "ครูกานดา",
+            start: 76,
+            end: 87,
+            project: "D",
+            img: "https://lh3.googleusercontent.com/d/1i1kANCucS8pntOiGOgaUiIGBhKh61a71",
+          },
+          {
+            id: 6,
+            title: "การเลี้ยงลูกด้วยนมแม่ (Breast Feeding)",
+            teach: "ครูกานดา",
+            start: 88,
+            end: 104,
+            project: "D",
+            img: "https://lh3.googleusercontent.com/d/1Cwbl8tY2stWVnY51eyvbrFP22OxjOkjy",
+          },
+          {
+            id: 7,
+            title: "Nursing care of the normal newborn",
+            teach: "ครูกานดา",
+            start: 105,
+            end: 117,
+            project: "D",
+            img: "https://lh3.googleusercontent.com/d/1o8SwGBqXy7JS1rY46VAz8UvE-jCm01FS",
+          },
+        ];
+        
+        // จำลองการโหลด (ถ้าใช้ google script จริงให้เอา setTimeout ออก)
+        createMenu(data);
+        // google.script.run.withSuccessHandler(createMenu).getdata();
+      };
+    </script>
+  </body>
+</html>
