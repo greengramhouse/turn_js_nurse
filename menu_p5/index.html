@@ -24,8 +24,8 @@
                 800: '#5D4037',
               },
               pastel: {
-                pink: '#FFD1DC',
-                darkPink: '#D68C9A',
+                green: '#bbf7d0', // Green-200 equivalent
+                darkGreen: '#15803d', // Green-700 equivalent
               }
             },
             boxShadow: {
@@ -39,9 +39,10 @@
 
     <style>
       body {
-        /* พื้นหลังลายไม้แบบ Soft หรือสีผนังห้อง */
-        background-color: #fdf2f8; /* Pink-50 equivalent */
-        background-image: radial-gradient(#db2777 0.5px, transparent 0.5px), radial-gradient(#db2777 0.5px, #fdf2f8 0.5px);
+        /* พื้นหลังโทนเขียวอ่อน (Nature/Healing Vibe) */
+        background-color: #f0fdf4; /* Green-50 */
+        /* ลายจุด Polka dot สีเขียวอ่อน */
+        background-image: radial-gradient(#86efac 0.5px, transparent 0.5px), radial-gradient(#86efac 0.5px, #f0fdf4 0.5px);
         background-size: 20px 20px;
         background-position: 0 0, 10px 10px;
         min-height: 100vh;
@@ -58,7 +59,7 @@
         z-index: 10;
       }
 
-      /* Scrollbar Customization */
+      /* Scrollbar Customization (Green Theme) */
       ::-webkit-scrollbar {
         width: 8px;
       }
@@ -66,54 +67,46 @@
         background: rgba(255, 255, 255, 0.5);
       }
       ::-webkit-scrollbar-thumb {
-        background: #D68C9A;
+        background: #86efac; /* Green-300 */
         border-radius: 4px;
       }
       ::-webkit-scrollbar-thumb:hover {
-        background: #be185d;
+        background: #22c55e; /* Green-500 */
       }
     </style>
   </head>
   <body class="flex flex-col min-h-screen font-sans text-gray-800">
 
-    <!-- Header / Navbar -->
-    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md shadow-md border-b-4 border-pink-300">
+    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md shadow-md border-b-4 border-green-300">
       <div class="container mx-auto px-4 py-3 flex flex-col sm:flex-row justify-between items-center gap-2">
         <div class="flex items-center gap-3">
-            <div class="bg-green-400 text-white p-2 rounded-lg shadow-sm">
+            <div class="bg-green-500 text-white p-2 rounded-lg shadow-sm">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                 </svg>
             </div>
-            <h1 class="text-xl sm:text-2xl font-bold text-pink-700 tracking-wide">พยาบาลผู้สูงอายุ</h1>
+            <h1 class="text-xl sm:text-2xl font-bold text-green-700 tracking-wide">พยาบาลผู้สูงอายุ</h1>
         </div>
-        <span id="countbook" class="px-4 py-1 bg-pink-100 text-pink-800 rounded-full text-sm font-semibold shadow-inner">
+        <span id="countbook" class="px-4 py-1 bg-green-100 text-green-800 rounded-full text-sm font-semibold shadow-inner">
             กำลังโหลดข้อมูล...
         </span>
       </div>
     </nav>
 
-    <!-- Main Content: Bookshelf -->
     <main class="flex-grow container mx-auto px-4 py-8">
-      <!-- Title Section -->
       <div class="text-center mb-10">
         <h2 class="text-3xl font-bold text-gray-800 mb-2 drop-shadow-sm">บทเรียนวิชาการพยาบาลผู้สูงอายุ</h2>
         <p class="text-gray-600">เลือกหนังสือเรียนที่ต้องการศึกษา</p>
       </div>
 
-      <!-- Books Grid (The Shelf) -->
-      <!-- ปรับ grid-cols เพื่อความ responsive: 
-           มือถือเล็ก: 1 แถว, มือถือใหญ่: 2 แถว, Tablet: 3 แถว, Desktop: 4 แถว -->
       <div id="menu" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-12">
-        <!-- Content will be injected here by JS -->
-      </div>
+        </div>
     </main>
 
-    <!-- Footer / Credit -->
     <footer class="bg-gray-800 text-white py-4 mt-auto">
       <div class="container mx-auto px-4 text-center">
         <p class="text-sm opacity-80">
-          Developed By: Waroonporn Rat. || 2025 <span class="text-pink-400">©</span>
+          Developed By: Waroonporn Rat. || 2025 <span class="text-green-400">©</span>
         </p>
         <p class="text-xs text-gray-400 mt-1">สื่อการสอนอิเล็กทรอนิกส์เพื่อการพยาบาล</p>
       </div>
@@ -132,35 +125,29 @@
           const { id, title, teach, start, end, project, img } = item;
           
           // HTML Structure for a single book on a shelf
+          // Update placeholder image color to green
           const bookHTML = `
             <div class="relative group flex flex-col items-center">
-                <!-- Link Wrapper -->
                 <a href="https://greengramhouse.github.io/turn_js_nurse/n5.html?start=${start}&end=${end}" 
                    class="relative w-full flex flex-col items-center z-10 transition-transform duration-300">
                     
-                    <!-- The Book Itself -->
                     <div class="book-card relative w-44 h-64 sm:w-48 sm:h-72 bg-white rounded-r-md rounded-l-sm shadow-book overflow-hidden cursor-pointer border-l-4 border-gray-300/50">
-                        <!-- Book Cover Image -->
                         <img src="${img}" alt="${title}" 
                              class="w-full h-full object-cover opacity-95 group-hover:opacity-100 transition-opacity"
-                             onerror="this.src='https://placehold.co/300x400/pink/white?text=${project}'">
+                             onerror="this.src='https://placehold.co/300x400/86efac/166534?text=${project}'">
                         
-                        <!-- Sheen/Gloss effect on cover -->
                         <div class="absolute inset-0 bg-gradient-to-tr from-black/10 via-white/10 to-transparent pointer-events-none"></div>
                         
-                        <!-- Side Spine highlight (Left side) -->
                         <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-white/30 z-20"></div>
                     </div>
 
-                    <!-- Book Info (appears below/on the shelf) -->
                     <div class="mt-4 w-full px-2 text-center relative z-20">
-                        <div class="bg-white/90 backdrop-blur-sm p-3 rounded-lg shadow-sm border border-pink-100 min-h-[80px] flex flex-col justify-center transform transition group-hover:scale-105">
+                        <div class="bg-white/90 backdrop-blur-sm p-3 rounded-lg shadow-sm border border-green-100 min-h-[80px] flex flex-col justify-center transform transition group-hover:scale-105">
                             <h3 class="text-sm font-bold text-gray-800 leading-tight line-clamp-2 mb-1" title="${title}">${title}</h3>
                         </div>
                     </div>
                 </a>
 
-                <!-- The Shelf Plank (Underneath the book) -->
                 <div class="absolute bottom-[6.5rem] w-[120%] h-4 bg-wood-700 rounded-sm shadow-shelf transform translate-y-2 z-0">
                    <div class="w-full h-full bg-gradient-to-b from-wood-500 to-wood-800 opacity-90"></div>
                 </div>
@@ -173,7 +160,7 @@
 
       // Load Data
       window.onload = function () {
-        // Mock Data (ใช้ข้อมูลเดิมของคุณ)
+        // Mock Data
         const data = [
           {
             id: 1,
@@ -184,10 +171,17 @@
             project: "A",
             img: "https://lh3.googleusercontent.com/d/1LZs8TV8DAWUSdTuphyy5Aptnna-Gbm8P",
           },
-          
+           {
+            id: 2,
+            title: "Elderly Care Basics",
+            teach: "ครูสมศรี",
+            start: 0,
+            end: 15,
+            project: "B",
+            img: "INVALID_URL_TEST", // Test placeholder color
+          },
         ];
         
-        // จำลองการโหลด (ถ้าใช้ google script จริงให้เอา setTimeout ออก)
         createMenu(data);
         // google.script.run.withSuccessHandler(createMenu).getdata();
       };
